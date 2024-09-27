@@ -38,8 +38,8 @@ const register =  async (req: Request, res: Response) => {
     }
 }
 
-const getAllCourse = (req: Request, res: Response) => {
-    const courses = prisma.courses.findMany();
+const getAllCourse = async (req: Request, res: Response) => {
+    const courses = await prisma.courses.findMany();
     return res.json({courses})
 }
 

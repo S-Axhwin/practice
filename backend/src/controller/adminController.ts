@@ -24,7 +24,6 @@ const login = async (req: Request, res: Response) => {
     }
 
 }
-
 // router.get("/courses", )       // get all the course
 const getAllCourse = async (req: Request, res: Response) => {
     const courses = await prisma.courses.findMany();
@@ -45,10 +44,37 @@ const createCourses = async (req: Request, res: Response) => {
     }
 }
 // router.put("/course/:id", )    // update single course
+const updateSingleCourse = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const changes = req.body;
+    delete changes["id"];
+    if(!id) return res.status(404).json({mes: "no course found"});
+
+    const isExist = await prisma.courses.findUnique({
+        where: {id}
+    });
+    if(!isExist) return res.json({mes: "course not found to update"});
+    const courseUpdated = await prisma.courses.update({
+        where: { id:isExist.id },
+        data: {
+            ...changes
+        }
+    });
+    res.json({courseUpdated});
+}
 // router.delete("/course/:id", ) // delete single course
+const deleteCourse = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const delCourse = await prisma.courses.delete({
+        where: {id}
+    });
+    return res.json({mes: "course deleted", delCourse});
+}
 
 export {
     createCourses,
     getAllCourse,
-    login
+    login,
+    updateSingleCourse,
+    deleteCourse
 }
